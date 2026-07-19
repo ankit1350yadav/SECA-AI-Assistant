@@ -1,0 +1,9 @@
+{
+  "name": "Smart Electricity Complaint Assistant (SECA)",
+  "description": "An AI-powered application for Indian electricity consumers to register complaints using text, voice, and images with automatic classification, severity detection, and tracking.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

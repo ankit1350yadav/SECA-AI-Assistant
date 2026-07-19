@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # 1. SECA FULL-STACK APPLICATION CONTAINER
+  seca-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: seca_application_node
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DATABASE_URL=postgresql://seca_admin:seca_password@seca-db:5432/seca_grid_db
+      - REDIS_URL=redis://seca-queue:6379
+    depends_on:
+      - seca-db
+      - seca-queue
+    restart: unless-stopped
+
+  # 2. RELATIONAL GRID DATABASE (POSTGRESQL)
+  seca-db:
+    image: postgres:15-alpine
+    container_name: seca_relational_db
+    environment:
+      - POSTGRES_USER=seca_admin
+      - POSTGRES_PASSWORD=seca_password
+      - POSTGRES_DB=seca_grid_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - seca_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # 3. TASK QUEUE BROKER (REDIS)
+  seca-queue:
+    image: redis:7-alpine
+    container_name: seca_task_broker
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  seca_postgres_data:
+    driver: local
